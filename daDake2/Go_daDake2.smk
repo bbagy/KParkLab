@@ -280,7 +280,7 @@ rule all:
         expand(f"{{proj}}_dada2/2_rds/ps.{{proj}}.{DATE}.rds",        proj=PROJECT_DIRS),
         expand(f"{{proj}}_dada2/1_out/{{proj}}.{DATE}.seqs.fna_tree/exported-tree/tree.nwk",
                proj=PROJECT_DIRS),
-        expand("zip_projects/{proj}_dada2.zip", proj=PROJECT_DIRS),
+        expand("zip_projects/{proj}_fastq.zip", proj=PROJECT_DIRS),
 
 # ══════════════════════════════════════════════════════════════════════════════
 # ITS ONLY: cutadapt primer trimming
@@ -582,18 +582,22 @@ rule qiime_tree:
         """
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Step 7: zip results
+# Step 7: zip raw FASTQs for upload
 # ══════════════════════════════════════════════════════════════════════════════
+# Archives the RAW fastq.gz files in {proj}/, not the {proj}_dada2/ result folder.
+# {proj}/ is never touched by the -D cleanup in Go_daDake2.sh, so the archive
+# contents do not depend on whether -D was used.
+# The tree/ps inputs only gate the step: raw data is uploaded after a successful run.
 rule create_zip:
     input:
         nwk = f"{{proj}}_dada2/1_out/{{proj}}.{DATE}.seqs.fna_tree/exported-tree/tree.nwk",
         ps  = f"{{proj}}_dada2/2_rds/ps.{{proj}}.{DATE}.rds",
     output:
-        zip = "zip_projects/{proj}_dada2.zip",
+        zip = "zip_projects/{proj}_fastq.zip",
     shell:
         r"""
         set -euo pipefail
         mkdir -p zip_projects
-        zip -s 3700m -r {output.zip} {wildcards.proj}_dada2 >/dev/null
-        echo "[create_zip] {wildcards.proj}_dada2.zip done"
+        zip -s 3700m -r {output.zip} {wildcards.proj} -i "*.fastq.gz" >/dev/null
+        echo "[create_zip] {wildcards.proj}_fastq.zip done"
         """

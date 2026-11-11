@@ -186,7 +186,7 @@ Key files:
 - `1_out/{proj}.{date}.track.csv` — read counts at each step (input → filtered → denoised → merged → nonchim)
 - `2_rds/ps.{proj}.{date}.rds` — phyloseq object for downstream R analysis
 - `failed.csv` — samples excluded from analysis with reason
-- `zip_projects/{proj}_dada2.zip` — split zip archive of the full project result folder
+- `zip_projects/{proj}_fastq.zip` — split zip archive of the raw `.fastq.gz` files in `{proj}/`, for upload
 
 ## Checkpointing
 
