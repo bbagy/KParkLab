@@ -202,9 +202,6 @@ rule bowtie2_host_filter:
             -2 {input.r2:q} \
             --threads {threads} \
             --very-sensitive-local \
-            --score-min L,2,0 \
-            --no-mixed \
-            --no-discordant \
             2> {log:q} \
         | samtools view -@ {threads} -b -f 12 -F 256 - \
             2>> {log:q} \
